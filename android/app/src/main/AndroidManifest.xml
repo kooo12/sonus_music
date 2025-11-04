@@ -1,0 +1,142 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.ako.sonus">
+
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE"/>
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ"/>
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE"/>
+    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS"/>
+    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS"/>
+    <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="com.xiaomi.permission.AUTH_SERVICE"/>
+    <uses-permission android:name="com.honor.launcher.permission.READ_SETTINGS"/>
+    <uses-permission android:name="com.honor.launcher.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.BADGE_ICON"/>
+    <uses-permission android:name="com.google.android.launcher.permission.READ_SETTINGS"/>
+    <uses-permission android:name="com.google.android.launcher.permission.WRITE_SETTINGS"/>
+    <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"/>
+    <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.BADGE_APP_ICON"/>
+    <uses-permission android:name="android.permission.BADGE_ICON"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_DOWNLOADS"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACTION_MANAGE_OVERLAY_PERMISSION"/>
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.BROADCAST_CLOSE_SYSTEM_DIALOGS"
+    tools:node="remove"/>
+        <!-- <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" /> -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+        </intent>
+    </queries>
+
+    <application
+        android:label="Sonus Music"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher"
+        android:enableOnBackInvokedCallback="true"
+        android:requestLegacyExternalStorage="true"
+        android:preserveLegacyExternalStorage="true"
+        android:usesCleartextTraffic="false">
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.security.package_verification"
+            android:value="true" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- Media playback service required by audio_service -->
+        <service
+            android:name="com.ryanheise.audioservice.AudioService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService"/>
+            </intent-filter>
+        </service>
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+        <meta-data
+            android:name="com.huawei.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher" />
+    </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+
+    <meta-data
+        android:name="com.google.android.launcher.notifications.badge_count"
+        android:value="true" />
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@mipmap/ic_launcher" />
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_color"
+        android:resource="@android:color/transparent" />
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_channel_id"
+        android:value="default_channel" />
+    <meta-data
+        android:name="com.google.firebase.messaging.notification_foreground_presentation"
+        android:value="false" />
+    <!-- <meta-data
+        android:name="com.google.android.launcher.notifications.badge_count"
+        android:value="true" /> -->
+    <meta-data
+        android:name="me.leolin.shortcutbadger.impl.google.GoogleBadger"
+        android:value="true" />
+</manifest>
