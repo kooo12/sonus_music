@@ -186,7 +186,16 @@ lib/
 
 ## Note
 
-This source codes are not latest update codes for some functions, some UI widgets and firebase authentication is up to date, updated using Firebase Dynamic Links to Email Link authentication and email verification.
+## Notice
+
+This repository contains **partial source code** (UI, some features and authentication flow)
+shared for **learning and reference purposes only**.
+
+It is **not a full application**.
+Backend services, APIs, full business logic, and production features
+are **not included**.
+
+This repository is licensed under the MIT License.
 
 ## 📝 License
 
