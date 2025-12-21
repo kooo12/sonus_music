@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:music_player/app/controllers/admin_dashboard_controller.dart';
+import 'package:music_player/app/pages/admin/controllers/admin_dashboard_controller.dart';
 import 'package:music_player/app/controllers/user_management_controller.dart';
 import 'package:music_player/app/pages/admin/controllers/fcm_cleanup_controller.dart';
 import 'package:music_player/app/pages/admin/controllers/developer_mode_controller.dart';

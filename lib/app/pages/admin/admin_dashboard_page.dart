@@ -6,7 +6,7 @@ import 'package:music_player/app/pages/admin/controllers/developer_mode_controll
 import 'package:music_player/app/routes/app_routes.dart';
 import 'package:music_player/app/ui/theme/sizes.dart';
 import 'package:music_player/app/ui/widgets/tps_buttons.dart';
-import '../../controllers/admin_dashboard_controller.dart';
+import 'controllers/admin_dashboard_controller.dart';
 import '../../ui/theme/app_colors.dart';
 import '../../helper_widgets/popups/loaders.dart';
 

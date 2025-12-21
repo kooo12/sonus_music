@@ -11,18 +11,6 @@ RxString aosBuildNo = "".obs;
 
 const USERKEY = 'userkey';
 
-// final isTablet = () {
-//   final width = Get.width;
-//   final height = Get.height;
-//   final aspectRatio = width / height;
-
-//   final isLargeEnough = width >= 600 && height >= 600;
-
-//   final hasTabletAspectRatio = aspectRatio >= 1.3 && aspectRatio <= 1.6;
-
-//   return isLargeEnough || hasTabletAspectRatio;
-// }();
-
 final screenWidth = MediaQuery.of(Get.context!).size.width;
 final orientation = MediaQuery.of(Get.context!).orientation;
 

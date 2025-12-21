@@ -44,7 +44,7 @@ class HomeController extends GetxController
   static const String _prefsKeyRecentSearches = 'recent_searches';
 
   // Cache for album artwork to prevent constant reloading
-  final Map<int, Uint8List?> _artworkCache = {};
+  final Map<String, Uint8List?> _artworkCache = {};
 
   // Reactive current song observable
   // final Rx<SongModel?> _currentSong = Rx<SongModel?>(null);
@@ -474,18 +474,21 @@ class HomeController extends GetxController
   }
 
   // Get album artwork with caching
-  Future<Uint8List?> getAlbumArtwork(int songId) async {
+  Future<Uint8List?> getAlbumArtwork(int songId,
+      {bool highQuality = false}) async {
+    final cacheKey = highQuality ? '${songId}_hq' : songId.toString();
+
     // Check cache first
-    if (_artworkCache.containsKey(songId)) {
-      return _artworkCache[songId];
+    if (_artworkCache.containsKey(cacheKey)) {
+      return _artworkCache[cacheKey];
     }
 
-    // Fetch from service and cache
+    // final size = highQuality ? 300 : 120;
     final artwork = await audioService.getAlbumArtwork(songId);
-    _artworkCache[songId] = artwork;
+    _artworkCache[cacheKey] = artwork;
 
-    // Limit cache size to prevent memory issues
-    if (_artworkCache.length > 100) {
+    final maxCacheSize = highQuality ? 50 : 100;
+    if (_artworkCache.length > maxCacheSize) {
       final oldestKey = _artworkCache.keys.first;
       _artworkCache.remove(oldestKey);
     }

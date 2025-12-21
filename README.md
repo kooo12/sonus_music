@@ -84,7 +84,7 @@ A modern, feature-rich music player application built with Flutter, offering a p
 
 ### Prerequisites
 
-- Flutter SDK (>=3.5.4)
+- Flutter SDK (>=3.24.5)
 - Dart SDK (>=3.5.4)
 - Android Studio / Xcode (for mobile development)
 - Firebase project setup (for authentication and notifications)
@@ -183,6 +183,10 @@ lib/
 - **Secure Storage**: Sensitive data stored using `flutter_secure_storage`
 - **Firebase Security Rules**: Properly configured Firestore security rules
 - **User Privacy**: Data encryption and secure authentication
+
+## Note
+
+This source codes are not latest update codes for some functions, some UI widgets and firebase authentication is up to date, updated using Firebase Dynamic Links to Email Link authentication and email verification.
 
 ## 📝 License
 

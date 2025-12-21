@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -6,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:music_player/app/controllers/home_controller.dart';
 import 'package:music_player/app/ui/theme/app_colors.dart';
 import 'package:music_player/app/ui/theme/sizes.dart';
+import 'package:music_player/app/ui/widgets/cached_album_artwork.dart';
 
 class MiniPlayer extends StatelessWidget {
   const MiniPlayer({
@@ -55,8 +55,9 @@ class MiniPlayer extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(16),
+            // Reduced blur for better performance on low-end devices
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5), // Reduced from 10
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -79,25 +80,13 @@ class MiniPlayer extends StatelessWidget {
                             ],
                           ),
                         ),
-                        child: FutureBuilder<Uint8List?>(
-                          key: ValueKey(
-                              'album_art_${song.id}'), // Add key to prevent rebuilds
-                          future: controller.getAlbumArtwork(song.id),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData && snapshot.data != null) {
-                              return ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.memory(
-                                  snapshot.data!,
-                                  fit: BoxFit.cover,
-                                  width: 40,
-                                  height: 40,
-                                ),
-                              );
-                            }
-                            return const Icon(Icons.music_note,
-                                color: Colors.white, size: 20);
-                          },
+                        child: CachedAlbumArtwork(
+                          songId: song.id,
+                          width: 40,
+                          height: 40,
+                          borderRadius: 8,
+                          highQuality:
+                              false, // Mini player doesn't need high quality
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -213,7 +202,8 @@ class MiniPlayer extends StatelessWidget {
                                 controller.seekTo(newPosition);
                               },
                               activeColor: Colors.white,
-                              inactiveColor: Colors.white.withOpacity(0.3),
+                              inactiveColor:
+                                  Colors.white.withOpacity(0.3),
                               thumbColor: Colors.white,
                             ),
                           ),

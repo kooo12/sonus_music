@@ -1,8 +1,8 @@
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:music_player/app/ui/widgets/cached_album_artwork.dart';
 import '../../controllers/home_controller.dart';
 import '../../ui/theme/app_colors.dart';
 
@@ -232,8 +232,10 @@ class _ArtworkGlass extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(18),
+          // Reduced blur for better performance on low-end devices
           child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            filter:
+                ui.ImageFilter.blur(sigmaX: 6, sigmaY: 6), // Reduced from 12
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.06),
@@ -249,23 +251,60 @@ class _ArtworkGlass extends StatelessWidget {
                         Icon(Icons.music_note, color: Colors.white70, size: 64),
                   );
                 }
-                return FutureBuilder<Uint8List?>(
-                  future: controller.getAlbumArtwork(song.id),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data != null) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(18),
-                        child: Image.memory(snapshot.data!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity),
-                      );
-                    }
-                    return const Center(
-                      child: Icon(Icons.album, color: Colors.white70, size: 64),
-                    );
-                  },
+
+                return CachedAlbumArtwork(
+                  key: ValueKey(
+                      'artwork_${song.id}'), // Force rebuild on song change
+                  songId: song.id,
+                  width: double.infinity,
+                  height: double.infinity,
+                  borderRadius: 18,
+                  highQuality: true, // Full screen can use higher quality
                 );
+                // Check for URL artwork first (YouTube videos)
+                // final artworkUrl = controller.getArtworkUrl(song.id);
+                // if (artworkUrl != null) {
+                //   return ClipRRect(
+                //     borderRadius: BorderRadius.circular(18),
+                //     child: Image.network(
+                //       artworkUrl,
+                //       fit: BoxFit.cover,
+                //       width: double.infinity,
+                //       height: double.infinity,
+                //       filterQuality: FilterQuality.high,
+                //       errorBuilder: (_, __, ___) => const Center(
+                //         child:
+                //             Icon(Icons.album, color: Colors.white70, size: 64),
+                //       ),
+                //     ),
+                //   );
+                // }
+
+                // return FutureBuilder<Uint8List?>(
+                //   future:
+                //       controller.getAlbumArtwork(song.id, highQuality: true),
+                //   builder: (context, snapshot) {
+                //     if (snapshot.hasData && snapshot.data != null) {
+                //       return ClipRRect(
+                //         borderRadius: BorderRadius.circular(18),
+                //         child: Image.memory(
+                //           snapshot.data!,
+                //           fit: BoxFit.cover,
+                //           width: double.infinity,
+                //           height: double.infinity,
+                //           // Use high quality filtering for better image rendering
+                //           filterQuality: FilterQuality.high,
+                //           // Cache the image for better performance
+                //           cacheWidth: null, // Use original resolution
+                //           cacheHeight: null,
+                //         ),
+                //       );
+                //     }
+                //     return const Center(
+                //       child: Icon(Icons.album, color: Colors.white70, size: 64),
+                //     );
+                //   },
+                // );
               }),
             ),
           ),
@@ -366,7 +405,6 @@ class _RepeatButton extends StatelessWidget {
         icon = Iconsax.repeate_one;
         break;
       case RepeatMode.off:
-      default:
         icon = Iconsax.repeat;
         break;
     }
@@ -404,10 +442,10 @@ class _RepeatButton extends StatelessWidget {
   }
 }
 
-class _GlassPill extends StatelessWidget {
+class GlassPill extends StatelessWidget {
   final String text;
   final VoidCallback? onTap;
-  const _GlassPill({required this.text, required this.onTap});
+  const GlassPill({super.key, required this.text, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

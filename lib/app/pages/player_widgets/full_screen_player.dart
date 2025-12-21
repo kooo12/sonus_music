@@ -1,10 +1,9 @@
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import '../../controllers/home_controller.dart';
 import '../../ui/theme/app_colors.dart';
+import '../../ui/widgets/cached_album_artwork.dart';
 
 class FullScreenPlayer extends StatelessWidget {
   final HomeController controller;
@@ -18,11 +17,20 @@ class FullScreenPlayer extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Blurred background from current artwork dominant colors
-          Container(color: Colors.black.withOpacity(0.6)),
-          BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 28, sigmaY: 28),
-            child: Container(color: Colors.black.withOpacity(0.2)),
+          // Simplified background - remove expensive BackdropFilter for better performance
+          // BackdropFilter with sigma 28 is extremely expensive on low-end devices (can take 50-100ms per frame)
+          // Use simple gradient instead for much better performance
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.85),
+                  Colors.black.withOpacity(0.95),
+                ],
+              ),
+            ),
           ),
 
           SafeArea(
@@ -136,7 +144,8 @@ class FullScreenPlayer extends StatelessWidget {
                             overlayShape: const RoundSliderOverlayShape(
                                 overlayRadius: 14),
                             activeTrackColor: TpsColors.musicPrimary,
-                            inactiveTrackColor: Colors.white.withOpacity(0.2),
+                            inactiveTrackColor:
+                                Colors.white.withOpacity(0.2),
                             thumbColor: TpsColors.musicPrimary,
                             overlayColor:
                                 TpsColors.musicPrimary.withOpacity(0.25),
@@ -244,42 +253,35 @@ class _ArtworkGlass extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(18),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.06),
-                borderRadius: BorderRadius.circular(18),
-                border:
-                    Border.all(color: Colors.white.withOpacity(0.18), width: 1),
-              ),
-              child: Obx(() {
-                final song = controller.currentSong;
-                if (song == null) {
-                  return const Center(
-                    child:
-                        Icon(Icons.music_note, color: Colors.white70, size: 64),
-                  );
-                }
-                return FutureBuilder<Uint8List?>(
-                  future: controller.getAlbumArtwork(song.id),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data != null) {
-                      return ClipRRect(
-                        borderRadius: BorderRadius.circular(18),
-                        child: Image.memory(snapshot.data!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity),
-                      );
-                    }
-                    return const Center(
-                      child: Icon(Icons.album, color: Colors.white70, size: 64),
-                    );
-                  },
-                );
-              }),
+          // Remove BackdropFilter - too expensive for low-end devices
+          // Use simple container with transparency instead
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.06),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                  color: Colors.white.withOpacity(0.18), width: 1),
             ),
+            child: Obx(() {
+              final song = controller.currentSong;
+              if (song == null) {
+                return const Center(
+                  child:
+                      Icon(Icons.music_note, color: Colors.white70, size: 64),
+                );
+              }
+              // Use optimized cached artwork widget instead of FutureBuilder
+              // Key ensures widget is rebuilt when song changes for proper reactivity
+              return CachedAlbumArtwork(
+                key: ValueKey(
+                    'artwork_${song.id}'), // Force rebuild on song change
+                songId: song.id,
+                width: double.infinity,
+                height: double.infinity,
+                borderRadius: 18,
+                highQuality: true, // Full screen can use higher quality
+              );
+            }),
           ),
         ),
       ),
@@ -311,7 +313,8 @@ class _GlassIconButton extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: borderRadius,
             color: Colors.white.withOpacity(0.08),
-            border: Border.all(color: Colors.white.withOpacity(0.18), width: 1),
+            border: Border.all(
+                color: Colors.white.withOpacity(0.18), width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.2),
@@ -378,7 +381,6 @@ class _RepeatButton extends StatelessWidget {
         icon = Iconsax.repeate_one;
         break;
       case RepeatMode.off:
-      default:
         icon = Iconsax.repeat;
         break;
     }
@@ -399,7 +401,8 @@ class _RepeatButton extends StatelessWidget {
             color: active
                 ? TpsColors.musicPrimary.withOpacity(0.25)
                 : Colors.white.withOpacity(0.08),
-            border: Border.all(color: Colors.white.withOpacity(0.18), width: 1),
+            border: Border.all(
+                color: Colors.white.withOpacity(0.18), width: 1),
             boxShadow: [
               if (active)
                 BoxShadow(
@@ -436,7 +439,8 @@ class _GlassPill extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.08),
             borderRadius: borderRadius,
-            border: Border.all(color: Colors.white.withOpacity(0.18), width: 1),
+            border: Border.all(
+                color: Colors.white.withOpacity(0.18), width: 1),
           ),
           child: Text(
             text,
@@ -473,7 +477,8 @@ class _ShuffleButton extends StatelessWidget {
             color: active
                 ? TpsColors.musicPrimary.withOpacity(0.25)
                 : Colors.white.withOpacity(0.08),
-            border: Border.all(color: Colors.white.withOpacity(0.18), width: 1),
+            border: Border.all(
+                color: Colors.white.withOpacity(0.18), width: 1),
             boxShadow: [
               if (active)
                 BoxShadow(
